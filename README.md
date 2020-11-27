@@ -1,4 +1,4 @@
-# Serverless Solution and Architecture Patterns CDK
+# Serverless Solution and Architecture Patterns with CDK
 
 [AWS Solutions Constructs – A Library of Architecture Patterns for the AWS CDK](https://aws.amazon.com/blogs/aws/aws-solutions-constructs-a-library-of-architecture-patterns-for-the-aws-cdk/)
 
