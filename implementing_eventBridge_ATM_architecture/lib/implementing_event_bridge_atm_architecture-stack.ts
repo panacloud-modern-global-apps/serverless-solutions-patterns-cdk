@@ -2,8 +2,7 @@ import * as cdk from "@aws-cdk/core";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as event from "@aws-cdk/aws-events";
 import * as lambdaDestination from "@aws-cdk/aws-lambda-destinations";
-import * as iam from "@aws-cdk/aws-iam";
-import * as target from "@aws-cdk/aws-events-targets";
+
 import {
   EventsRuleToLambdaProps,
   EventsRuleToLambda,
@@ -31,13 +30,13 @@ export class ImplementingEventBridgeAtmArchitectureStack extends cdk.Stack {
 
     const Case1Lambda: EventsRuleToLambdaProps = {
       lambdaFunctionProps: {
-        runtime: lambda.Runtime.NODEJS_12_X as any,
-        code: lambda.Code.fromAsset("atmConsumer") as any,
+        runtime: lambda.Runtime.NODEJS_12_X,
+        code: lambda.Code.fromAsset("atmConsumer"),
         handler: "case1.handler",
       },
       eventRuleProps: {
         ruleName: "Case1Rule",
-        eventBus: bus as any,
+        eventBus: bus,
         eventPattern: {
           detailType: ["transaction"],
           source: ["myATMapp"],
@@ -49,13 +48,13 @@ export class ImplementingEventBridgeAtmArchitectureStack extends cdk.Stack {
     };
     const Case2Lambda: EventsRuleToLambdaProps = {
       lambdaFunctionProps: {
-        runtime: lambda.Runtime.NODEJS_12_X as any,
-        code: lambda.Code.fromAsset("atmConsumer") as any,
+        runtime: lambda.Runtime.NODEJS_12_X,
+        code: lambda.Code.fromAsset("atmConsumer"),
         handler: "case2.handler",
       },
       eventRuleProps: {
         ruleName: "Case2Rule",
-        eventBus: bus as any,
+        eventBus: bus,
         eventPattern: {
           detailType: ["transaction"],
           source: ["myATMapp"],
@@ -71,13 +70,13 @@ export class ImplementingEventBridgeAtmArchitectureStack extends cdk.Stack {
     };
     const Case3Lambda: EventsRuleToLambdaProps = {
       lambdaFunctionProps: {
-        runtime: lambda.Runtime.NODEJS_12_X as any,
-        code: lambda.Code.fromAsset("atmConsumer") as any,
+        runtime: lambda.Runtime.NODEJS_12_X,
+        code: lambda.Code.fromAsset("atmConsumer"),
         handler: "case3.handler",
       },
       eventRuleProps: {
         ruleName: "Case3Rule",
-        eventBus: bus as any,
+        eventBus: bus,
         eventPattern: {
           detailType: ["transaction"],
           source: ["myATMapp"],
