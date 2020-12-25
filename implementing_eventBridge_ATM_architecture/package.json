@@ -21,11 +21,11 @@
     "typescript": "~3.9.7"
   },
   "dependencies": {
-    "@aws-cdk/aws-events": "^1.77.0",
-    "@aws-cdk/aws-lambda": "^1.77.0",
-    "@aws-cdk/aws-lambda-destinations": "^1.77.0",
-    "@aws-cdk/core": "1.77.0",
-    "@aws-solutions-constructs/aws-events-rule-lambda": "^1.77.0",
+    "@aws-cdk/aws-events": "^1.74.0",
+    "@aws-cdk/aws-lambda": "^1.74.0",
+    "@aws-cdk/aws-lambda-destinations": "^1.74.0",
+    "@aws-cdk/core": "1.74.0",
+    "@aws-solutions-constructs/aws-events-rule-lambda": "^1.74.0",
     "@types/aws-lambda": "^8.10.67",
     "aws-sdk": "^2.815.0",
     "source-map-support": "^0.5.16"

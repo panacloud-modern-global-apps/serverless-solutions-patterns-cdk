@@ -1,0 +1,42 @@
+{
+  "name": "implement_the_event_bridge_etl_architecture",
+  "version": "0.1.0",
+  "bin": {
+    "implement_the_event_bridge_etl_architecture": "bin/implement_the_event_bridge_etl_architecture.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk"
+  },
+  "devDependencies": {
+    "@aws-cdk/assert": "1.75.0",
+    "@types/jest": "^26.0.10",
+    "@types/node": "10.17.27",
+    "jest": "^26.4.2",
+    "ts-jest": "^26.2.0",
+    "aws-cdk": "1.75.0",
+    "ts-node": "^9.0.0",
+    "typescript": "~3.9.7"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-dynamodb": "1.77.0",
+    "@aws-cdk/aws-events": "1.77.0",
+    "@aws-cdk/aws-events-targets": "1.77.0",
+    "@aws-cdk/aws-iam": "1.77.0",
+    "@aws-cdk/aws-lambda": "1.77.0",
+    "@aws-cdk/aws-lambda-event-sources": "1.77.0",
+    "@aws-cdk/aws-logs": "1.77.0",
+    "@aws-cdk/aws-s3": "1.77.0",
+    "@aws-cdk/aws-s3-notifications": "1.77.0",
+    "@aws-cdk/aws-sqs": "1.77.0",
+    "@aws-cdk/core": "1.77.0",
+    "@aws-solutions-constructs/aws-s3-sqs": "^1.77.0",
+    "@aws-solutions-constructs/aws-sqs-lambda": "^1.77.0",
+    "@types/aws-lambda": "^8.10.67",
+    "aws-sdk": "^2.816.0",
+    "csv-parse": "^4.14.2",
+    "source-map-support": "^0.5.19"
+  }
+}
