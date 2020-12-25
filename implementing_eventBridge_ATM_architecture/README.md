@@ -16,7 +16,7 @@ cdk init --language=typescript
 And install the following dependencies.
 
 ```bash
-npm install @aws-cdk/aws-lambda @aws-cdk/aws-events @aws-cdk/aws-lambda-destinations
+npm install @aws-cdk/aws-lambda @aws-cdk/aws-events @aws-cdk/aws-lambda-destinations @aws-solutions-constructs/aws-events-rule-lambda
 ```
 
 ## Step 2
