@@ -1,12 +1,10 @@
 const AWS = require("aws-sdk");
 import { APIGatewayProxyEvent } from "aws-lambda";
-import * as fs from "fs";
-import * as parse from "csv-parse";
 
 const S3 = new AWS.S3();
+const eventbridge = new AWS.EventBridge();
 
 exports.handler = async (event: any) => {
-  console.log("hello world");
   console.log(JSON.stringify(event, null, 2));
 
   let records: any[] = event.Records;
@@ -18,8 +16,6 @@ exports.handler = async (event: any) => {
     console.log("processing s3 events " + JSON.stringify(payload, null, 2));
 
     let s3eventRecords = payload.Records;
-
-    console.log("records " + s3eventRecords);
 
     for (let i in s3eventRecords) {
       let s3event = s3eventRecords[i];
@@ -44,26 +40,38 @@ exports.handler = async (event: any) => {
         .map(function (lineStr: string) {
           return lineStr.split(","); // Convert each line to array (,)
         });
-      const header = lines[0];
+      const headers = lines[0];
       const linesWithoutHeader = lines.slice(1);
-      console.log(linesWithoutHeader);
-      console.log(JSON.stringify(linesWithoutHeader, null, 2));
-      console.log(JSON.stringify(header, null, 2));
+
+      linesWithoutHeader.forEach((data: any) => {
+        //event params
+        const eventParams = {
+          Entries: [
+            {
+              // Event envelope fields
+              Source: "myETLapp",
+              EventBusName: "ETLEventBus",
+              DetailType: "EtlProcess",
+              Time: new Date(),
+              // Main event body
+              Detail: JSON.stringify({
+                status: "extracted",
+                headers: headers,
+                data: data,
+              }),
+            },
+          ],
+        };
+
+        const result = eventbridge.putEvents(eventParams).promise();
+        result
+          .then((data: any) => {
+            console.log("Success");
+          })
+          .catch((err: any) => {
+            console.log(err);
+          });
+      });
     }
   }
 };
-
-// const csvData = await S3.getObject(params).promise();
-
-// .createReadStream()
-// .pipe(
-//   parse({
-//     delimiter: ",",
-//   })
-// )
-// .on("data", (dataRow: any) => {
-//   csvData.push(dataRow);
-// })
-// .on("end", () => {
-//   console.log(csvData);
-// });
