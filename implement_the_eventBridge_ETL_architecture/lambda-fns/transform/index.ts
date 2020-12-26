@@ -1,3 +1,7 @@
+import * as AWS from "aws-sdk";
+
+const eventbridge = new AWS.EventBridge();
+
 exports.handler = async (event: any) => {
   const headers: string[] = event.detail.headers;
 
@@ -13,7 +17,31 @@ exports.handler = async (event: any) => {
   for (let index in headers) {
     transformedObject[headers[index]] = data[index];
   }
+  const eventParams = {
+    Entries: [
+      {
+        // Event envelope fields
+        Source: "myETLapp",
+        EventBusName: "ETLEventBus",
+        DetailType: "EtlProcess",
+        Time: new Date(),
+        // Main event body
+        Detail: JSON.stringify({
+          status: "transformed",
+          data: transformedObject,
+        }),
+      },
+    ],
+  };
+  await eventbridge
+    .putEvents(eventParams)
+    .promise()
+    .then((data: any) => {
+      console.log("Success");
+    })
+    .catch((err: any) => {
+      console.log(err);
+    });
 
   console.log(JSON.stringify(transformedObject, null, 2));
-  return { Object: transformedObject };
 };

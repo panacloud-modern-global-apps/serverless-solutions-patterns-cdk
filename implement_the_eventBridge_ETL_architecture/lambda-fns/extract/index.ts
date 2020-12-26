@@ -1,5 +1,6 @@
 const AWS = require("aws-sdk");
 import { APIGatewayProxyEvent } from "aws-lambda";
+import { format } from "path";
 
 const S3 = new AWS.S3();
 const eventbridge = new AWS.EventBridge();
@@ -43,8 +44,7 @@ exports.handler = async (event: any) => {
       const headers = lines[0];
       const linesWithoutHeader = lines.slice(1);
 
-      linesWithoutHeader.forEach((data: any) => {
-        //event params
+      for (let index in linesWithoutHeader) {
         const eventParams = {
           Entries: [
             {
@@ -57,21 +57,21 @@ exports.handler = async (event: any) => {
               Detail: JSON.stringify({
                 status: "extracted",
                 headers: headers,
-                data: data,
+                data: linesWithoutHeader[index],
               }),
             },
           ],
         };
-
-        const result = eventbridge.putEvents(eventParams).promise();
-        result
+        const result = await eventbridge
+          .putEvents(eventParams)
+          .promise()
           .then((data: any) => {
             console.log("Success");
           })
           .catch((err: any) => {
             console.log(err);
           });
-      });
+      }
     }
   }
 };
