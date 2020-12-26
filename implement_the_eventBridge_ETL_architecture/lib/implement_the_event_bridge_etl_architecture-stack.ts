@@ -1,13 +1,10 @@
 import * as cdk from "@aws-cdk/core";
 import * as s3 from "@aws-cdk/aws-s3";
-import * as s3n from "@aws-cdk/aws-s3-notifications";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as lambdaDestination from "@aws-cdk/aws-lambda-destinations";
 import * as iam from "@aws-cdk/aws-iam";
 import * as sqs from "@aws-cdk/aws-sqs";
 import * as event from "@aws-cdk/aws-events";
-import * as stepfunctions from "@aws-cdk/aws-stepfunctions";
-import * as stepFunctionTasks from "@aws-cdk/aws-stepfunctions-tasks";
 import * as ddb from "@aws-cdk/aws-dynamodb";
 
 import {
@@ -23,6 +20,8 @@ import {
   EventsRuleToLambdaProps,
   EventsRuleToLambda,
 } from "@aws-solutions-constructs/aws-events-rule-lambda";
+import { IEventBus } from "@aws-cdk/aws-events";
+import { IGrantable } from "@aws-cdk/aws-iam";
 
 export class ImplementTheEventBridgeEtlArchitectureStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -46,12 +45,12 @@ export class ImplementTheEventBridgeEtlArchitectureStack extends cdk.Stack {
     //Creating Event Bus
     const bus = new event.EventBus(this, "eventBus", {
       eventBusName: "ETLEventBus",
-    });
+    }) as IEventBus;
 
     //Creating aws-s3-sqs solutions construct
     const s3_sqs_props: S3ToSqsProps = {
       queueProps: {
-        visibilityTimeout: cdk.Duration.seconds(300) as any,
+        visibilityTimeout: cdk.Duration.seconds(300),
         encryption: sqs.QueueEncryption.UNENCRYPTED,
       },
       bucketProps: {
@@ -60,7 +59,7 @@ export class ImplementTheEventBridgeEtlArchitectureStack extends cdk.Stack {
       },
       s3EventTypes: [s3.EventType.OBJECT_CREATED], //By default
     };
-    const sqs_s3 = new S3ToSqs(this as any, "S3_To_Sqs", s3_sqs_props);
+    const sqs_s3 = new S3ToSqs(this, "S3_To_Sqs", s3_sqs_props);
 
     //Create a specific role for Lambda function
     const role = new iam.Role(this, "LambdaRole", {
@@ -80,22 +79,18 @@ export class ImplementTheEventBridgeEtlArchitectureStack extends cdk.Stack {
     const sqs_lambda_props: SqsToLambdaProps = {
       existingQueueObj: sqs_s3.sqsQueue,
       lambdaFunctionProps: {
-        runtime: lambda.Runtime.NODEJS_10_X as any,
+        runtime: lambda.Runtime.NODEJS_10_X,
         handler: "index.handler",
-        code: lambda.Code.fromAsset(`lambda-fns/extract`) as any,
+        code: lambda.Code.fromAsset(`lambda-fns/extract`),
         reservedConcurrentExecutions: LAMBDA_THROTTLE_SIZE,
-        role: role as any,
-        onSuccess: new lambdaDestination.EventBridgeDestination(bus) as any,
+        role: role,
+        onSuccess: new lambdaDestination.EventBridgeDestination(bus),
       },
       deadLetterQueueProps: {
         encryption: sqs.QueueEncryption.UNENCRYPTED,
       },
     };
-    const sqs_lambda = new SqsToLambda(
-      this as any,
-      "SqsToLambda",
-      sqs_lambda_props
-    );
+    const sqs_lambda = new SqsToLambda(this, "SqsToLambda", sqs_lambda_props);
 
     // defines a lambda to transform the data that was extracted from s3
     const transformFunc = new lambda.Function(this, "transformData", {
@@ -104,7 +99,7 @@ export class ImplementTheEventBridgeEtlArchitectureStack extends cdk.Stack {
       handler: "index.handler",
       timeout: cdk.Duration.seconds(3),
       reservedConcurrentExecutions: LAMBDA_THROTTLE_SIZE,
-      onSuccess: new lambdaDestination.EventBridgeDestination(bus) as any,
+      onSuccess: new lambdaDestination.EventBridgeDestination(bus),
     });
 
     // this function adds data to the dynamoDB table
@@ -117,7 +112,7 @@ export class ImplementTheEventBridgeEtlArchitectureStack extends cdk.Stack {
         DDB_TABLE_NAME: ddbTable.tableName,
       },
       timeout: cdk.Duration.seconds(3),
-      onSuccess: new lambdaDestination.EventBridgeDestination(bus) as any,
+      onSuccess: new lambdaDestination.EventBridgeDestination(bus),
     });
 
     // this function logs the status of the operation
@@ -132,16 +127,16 @@ export class ImplementTheEventBridgeEtlArchitectureStack extends cdk.Stack {
     // Giving LoadFunc Lambda permission to access dynamo db
     ddbTable.grantFullAccess(loadFunc);
     // Giving LoadFunc Lambda permission to put events
-    event.EventBus.grantPutEvents(transformFunc as any);
+    event.EventBus.grantPutEvents(transformFunc);
     // // Giving transformFunc Lambda permission to put events
-    event.EventBus.grantPutEvents(loadFunc as any);
+    event.EventBus.grantPutEvents(loadFunc);
 
     //Creatig solutions construct aws-events-rule-lambda for  transform lambda
     const event_rule_transform_lambda: EventsRuleToLambdaProps = {
-      existingLambdaObj: transformFunc as any,
+      existingLambdaObj: transformFunc,
       eventRuleProps: {
         ruleName: "extractedDataRule",
-        eventBus: bus as any,
+        eventBus: bus,
         eventPattern: {
           detailType: ["EtlProcess"],
           source: ["myETLapp"],
@@ -153,17 +148,17 @@ export class ImplementTheEventBridgeEtlArchitectureStack extends cdk.Stack {
     };
 
     new EventsRuleToLambda(
-      this as any,
+      this,
       "test-events-rule-transform-lambda",
       event_rule_transform_lambda
     );
 
     //Creatig solutions construct aws-events-rule-lambda for  load lambda
     const event_rule_load_lambda: EventsRuleToLambdaProps = {
-      existingLambdaObj: loadFunc as any,
+      existingLambdaObj: loadFunc,
       eventRuleProps: {
         ruleName: "transformedDataRule",
-        eventBus: bus as any,
+        eventBus: bus,
         eventPattern: {
           detailType: ["EtlProcess"],
           source: ["myETLapp"],
@@ -175,17 +170,17 @@ export class ImplementTheEventBridgeEtlArchitectureStack extends cdk.Stack {
     };
 
     new EventsRuleToLambda(
-      this as any,
+      this,
       "test-events-rule-load-lambda",
       event_rule_load_lambda
     );
 
     //Creatig solutions construct aws-events-rule-lambda for  load lambda
     const event_rule_observe_lambda: EventsRuleToLambdaProps = {
-      existingLambdaObj: observeFunc as any,
+      existingLambdaObj: observeFunc,
       eventRuleProps: {
         ruleName: "allStatusRule",
-        eventBus: bus as any,
+        eventBus: bus,
         eventPattern: {
           detailType: ["EtlProcess"],
           source: ["myETLapp"],
@@ -197,57 +192,9 @@ export class ImplementTheEventBridgeEtlArchitectureStack extends cdk.Stack {
     };
 
     new EventsRuleToLambda(
-      this as any,
+      this,
       "test-events-rule-observe-lambda",
       event_rule_observe_lambda
     );
   }
 }
-// //Invote transformFunc lambda
-// const firstStep = new stepFunctionTasks.LambdaInvoke(
-//   this,
-//   "Invoke transform lambda",
-//   {
-//     lambdaFunction: transformFunc as any,
-//   }
-// );
-// //Invote loadFunc lambda
-// const secondStep = new stepFunctionTasks.LambdaInvoke(
-//   this,
-//   "Invoke load lambda",
-//   {
-//     lambdaFunction: loadFunc as any,
-//     inputPath: "$.Payload",
-//   }
-// );
-
-// // creating chain to define the sequence of execution
-// const chain = stepfunctions.Chain.start(firstStep as any).next(
-//   secondStep as any
-// );
-
-// //aws_events_rule_step_function Solutions construct
-// const aws_events_rule_step_function: EventsRuleToStepFunctionProps = {
-//   stateMachineProps: {
-//     definition: chain as any,
-//   },
-
-//   eventRuleProps: {
-//     ruleName: "extractedDataRule",
-//     eventBus: bus as any,
-//     eventPattern: {
-//       detailType: ["EtlProcess"],
-//       source: ["myETLapp"],
-//       detail: {
-//         status: ["extracted"],
-//       },
-//     },
-//   },
-//   createCloudWatchAlarms: false,
-// };
-
-// new EventsRuleToStepFunction(
-//   this as any,
-//   "test-events-rule-step-function-stack",
-//   aws_events_rule_step_function
-// );
