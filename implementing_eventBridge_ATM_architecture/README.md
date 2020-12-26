@@ -3,6 +3,7 @@
 In this example, a banking application for automated teller machine (ATM) produces events about transactions. It sends the events to EventBridge, which then uses rules defined by the application to route accordingly. There are three downstream services consuming a subset of these events.
 
 Our main motive is to make this architecture with the help of AWS solutions constructs. 
+
 ![eventBridge_ATM_architecture](images/eventBridge_ATM_architecture.png)
 
 ## Step 1
