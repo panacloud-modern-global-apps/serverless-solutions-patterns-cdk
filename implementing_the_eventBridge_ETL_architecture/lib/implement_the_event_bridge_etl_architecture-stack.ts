@@ -6,6 +6,7 @@ import * as iam from "@aws-cdk/aws-iam";
 import * as sqs from "@aws-cdk/aws-sqs";
 import * as event from "@aws-cdk/aws-events";
 import * as ddb from "@aws-cdk/aws-dynamodb";
+import { DockerImageAsset } from "@aws-cdk/aws-ecr-assets";
 
 import {
   SqsToLambda,
@@ -20,8 +21,6 @@ import {
   EventsRuleToLambdaProps,
   EventsRuleToLambda,
 } from "@aws-solutions-constructs/aws-events-rule-lambda";
-import { IEventBus } from "@aws-cdk/aws-events";
-import { IGrantable } from "@aws-cdk/aws-iam";
 
 export class ImplementTheEventBridgeEtlArchitectureStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -45,7 +44,7 @@ export class ImplementTheEventBridgeEtlArchitectureStack extends cdk.Stack {
     //Creating Event Bus
     const bus = new event.EventBus(this, "eventBus", {
       eventBusName: "ETLEventBus",
-    }) as IEventBus;
+    });
 
     //Creating aws-s3-sqs solutions construct
     const s3_sqs_props: S3ToSqsProps = {
@@ -195,6 +194,21 @@ export class ImplementTheEventBridgeEtlArchitectureStack extends cdk.Stack {
       this,
       "test-events-rule-observe-lambda",
       event_rule_observe_lambda
+    );
+
+    //The directory ecr-lambda must include a Dockerfile
+    const asset = new DockerImageAsset(this, "EcrImage", {
+      directory: "lambda-fns/ecr-lambda",
+    });
+
+    const ecrLambda = new lambda.DockerImageFunction(
+      this,
+      "LambdaFunctionECR",
+      {
+        code: lambda.DockerImageCode.fromEcr(asset.repository, {
+          tag: "ExtractedLambda",
+        }),
+      }
     );
   }
 }
