@@ -1,8 +1,9 @@
 ## Introduction
 
-Here, I show how you can build an event producer and consumer in AWS Lambda, and create a rule to route events. The code uses the AWS CDK, so you can deploy the application in your own AWS Account.
-
 In this example, a banking application for automated teller machine (ATM) produces events about transactions. It sends the events to EventBridge, which then uses rules defined by the application to route accordingly. There are three downstream services consuming a subset of these events.
+
+Our main motive is to make this architecture with the help of AWS solutions constructs. 
+
 ![eventBridge_ATM_architecture](images/eventBridge_ATM_architecture.png)
 
 ## Step 1
@@ -23,7 +24,7 @@ npm install @aws-cdk/aws-lambda @aws-cdk/aws-events @aws-cdk/aws-lambda-destinat
 
 Now add Constructs In you stack
 
-1. First create custom event bus and name it Anything in my case I named it `AtmEventBus`
+1. First create custom event bus and name it anything in my case I named it `AtmEventBus`
 
 ```typescript
 //Creating eventBus
