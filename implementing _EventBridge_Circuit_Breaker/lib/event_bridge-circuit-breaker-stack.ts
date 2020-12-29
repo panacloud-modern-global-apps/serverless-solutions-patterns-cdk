@@ -7,6 +7,7 @@ import { LambdaToDynamoDB } from "@aws-solutions-constructs/aws-lambda-dynamodb"
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import { GlobalSecondaryIndexProps } from "@aws-cdk/aws-dynamodb";
 import { EventsRuleToLambda } from "@aws-solutions-constructs/aws-events-rule-lambda";
+import { Duration } from "@aws-cdk/core";
 
 export class EventBridgeCircuitBreakerStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -17,6 +18,7 @@ export class EventBridgeCircuitBreakerStack extends cdk.Stack {
           runtime: lambda.Runtime.NODEJS_12_X,
           handler: "lambda.handler",
           code: lambda.Code.fromAsset(`lambda/webService`),
+          timeout : Duration.seconds(20),
         },
         apiGatewayProps: {
           defaultMethodOptions: {

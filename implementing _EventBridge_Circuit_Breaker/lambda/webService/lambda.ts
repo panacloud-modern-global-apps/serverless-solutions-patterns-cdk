@@ -2,6 +2,7 @@ const AWS = require("aws-sdk");
 AWS.config.region = process.env.AWS_REGION || "us-east-2";
 const eventbridge = new AWS.EventBridge();
 export {};
+
 const ERROR_THRESHOLD = 3;
 const serviceURL = "www.google.com";
 let response: any;
@@ -36,9 +37,12 @@ exports.handler = async (event: any, context: any) => {
     // 10 sec hard coded delay for simulation
     const fakeServiceCall = await new Promise((resolve, reject) => {
       console.log("--- Calling Webservice, recent errors below threshold ---");
-      reject("service timeout exception");
+
+      setTimeout(function () {
+        reject("service timeout exception")
+      }, 10000)
     }).catch((reason) => {
-      console.log("--- Service Call Failure ---");
+      console.log('--- Service Call Failure ---');
       console.log(reason);
       errorType = reason;
     });
@@ -63,16 +67,10 @@ exports.handler = async (event: any, context: any) => {
 
     console.log("--- EventBridge Response ---");
     console.log(result);
-    response = sendRes(
-      500,
-      "Something appears to be wrong with this service, please try again later"
-    );
+    response = sendRes(500, "Something appears to be wrong with this service, please try again later");
   } else {
     console.log("Circuit currently closed, sending back failure response");
-    response = sendRes(
-      500,
-      "This service has been experiencing issues for a while, we have closed the circuit"
-    );
+    response = sendRes(500, "This service has been experiencing issues for a while, we have closed the circuit");
   }
 
   return response;
