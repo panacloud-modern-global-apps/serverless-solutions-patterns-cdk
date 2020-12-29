@@ -4,8 +4,8 @@ export{}
 
 exports.handler = async function(event:any) {
     console.log("hello from failure lambda request :", JSON.stringify(event, null, 2));
-    const secondsSinceEpoch = Math.round(Date.now() / 1000);
-    const expirationTime = ''+(secondsSinceEpoch + 60);
+    const EpouchTime = Math.round(Date.now() / 1000);
+    const expirationTime = ''+(EpouchTime + 60);
     
     var params = {
       TableName: "circuitBreaker",

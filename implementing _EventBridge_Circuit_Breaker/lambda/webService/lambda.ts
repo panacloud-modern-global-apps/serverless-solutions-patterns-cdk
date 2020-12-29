@@ -10,13 +10,13 @@ let response: any;
 exports.handler = async (event: any, context: any) => {
   // create AWS SDK clients
   const dynamo = new AWS.DynamoDB();
-  const secondsSinceEpoch = Math.round(Date.now() / 1000);
+  const EpouchTime = Math.round(Date.now() / 1000);
 
   // We are querying our error Dynamo to count how many errors are in there for www.google.com
   var dynamoParams = {
     ExpressionAttributeValues: {
       ":v1": { S: serviceURL },
-      ":now": { N: secondsSinceEpoch.toString() },
+      ":now": { N: EpouchTime.toString() },
     },
     KeyConditionExpression: "SiteUrl = :v1 and ExpirationTime > :now",
     IndexName: "UrlIndex",
