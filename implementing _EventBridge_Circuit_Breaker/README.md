@@ -80,6 +80,8 @@ lambda_to_dynamodb.dynamoTable.grantFullAccess(event_lambda.lambdaFunction);
 This AWS Solutions Construct implements the AWS Lambda function and Amazon DynamoDB table with least-privilege permissions.
 The lambda Function which we connect with our DataBase (`Dynamodb`) is the same lambda which is integerated with APIgateway.
 
+- `timeToLiveAttribute` : Amazon DynamoDB Time to Live (TTL) allows you to define a per-item timestamp to determine when an item is no longer needed. Shortly after the date and time of the specified timestamp, DynamoDB deletes the item from your table without consuming any write throughput.TTL attributes must use the epoch time format. For example, the epoch timestamp for May 5, 2020 16:52:32 UTC is 1588697552. You can use a free online converter, such as `EpochConverter`, to get the correct value.
+
 ### Step 3 (Integrate Event Rule With Lambda)
 
 ```typescript
@@ -103,7 +105,7 @@ const event_lambda = new EventsRuleToLambda(this, "ErrorLambdaOfService", {
 });
 ```
 
-This AWS Solutions Construct implements an AWS Events rule and an AWS Lambda function.In eventRuleProps we defines an EventBridge rule which monitors an event based on an event pattern and invoke event targets when the pattern is matched against a triggered event.Whenever,Event is publish and matches with this rule . Rule routes them to `target` which in our case is`(Lambda Function)` for processing.
+This AWS Solutions Construct implements an AWS Events rule and an AWS Lambda function.In eventRuleProps we defines an EventBridge rule which monitors an event based on an event pattern and invoke event targets when the pattern is matched against a triggered event.Whenever,Event is publish and matches with this rule . Rule routes them to `target` which in our case is`Lambda Function` for processing.
 
 ### Step 4 (Create Lambda Functions)
 
@@ -240,6 +242,7 @@ exports.handler = async function (event: any) {
   console.log(result);
 };
 ```
+- This lambda function simply put data in Dynamodb . 
 
 ### When You Would Use This Pattern
 
