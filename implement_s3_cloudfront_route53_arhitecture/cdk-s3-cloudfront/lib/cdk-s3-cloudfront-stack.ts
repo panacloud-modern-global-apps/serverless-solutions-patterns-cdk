@@ -5,11 +5,7 @@ import * as route53 from "@aws-cdk/aws-route53"
 import * as targets from "@aws-cdk/aws-route53-targets"
 import * as acm from "@aws-cdk/aws-certificatemanager"
 import { IHostedZone } from "@aws-cdk/aws-route53"
-import {
-  CertificateValidation,
-  ICertificate,
-  Certificate,
-} from "@aws-cdk/aws-certificatemanager"
+import {ICertificate} from "@aws-cdk/aws-certificatemanager"
 import { Bucket } from "@aws-cdk/aws-s3"
 
 export class CdkS3CloudfrontStack extends cdk.Stack {
@@ -41,7 +37,7 @@ export class CdkS3CloudfrontStack extends cdk.Stack {
     )
 
     const deployment = new s3deploy.BucketDeployment(this, "DeployWebsite", {
-      sources: [s3deploy.Source.asset("../public")],
+      sources: [s3deploy.Source.asset("../frontend/public")],
       destinationBucket: s3_cloudfront_construct.s3Bucket as Bucket,
       distribution: s3_cloudfront_construct.cloudFrontWebDistribution,
     })
