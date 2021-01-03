@@ -109,7 +109,7 @@ Now let's break the stack code and understand each construct.
     table.grantReadWriteData(sqsSubscribeLambda);
   ```
   #### Step 4 
-  `lambda/publish` 
+  `lambda/publish` code. This Lambda Delivers a message to the specified queue.
   ```javascript
   var AWS = require("aws-sdk");
 
@@ -166,7 +166,7 @@ let sendRes = (status: number, body: string) => {
 
   ```
   #### Step 5 
-  `lambda/subscribe`
+  `lambda/subscribe` code. This Lambda will check the events records and put records into DynamoDB. 
   ```javascript
   const { DynamoDB } = require("aws-sdk");
 
