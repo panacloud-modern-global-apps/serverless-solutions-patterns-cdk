@@ -6,7 +6,7 @@ Amazon Route 53 is a highly available and scalable cloud Domain Name System (DNS
 
 ## Arhitecture
 
-arhitecture Image (https://raw.githubusercontent.com/cdk-patterns/serverless/master/s3-react-website/img/architecture.PNG)
+![arhitectureImage](https://raw.githubusercontent.com/cdk-patterns/serverless/master/s3-react-website/img/architecture.PNG)
 
 ### What is ACM (AWS Certificate Manager) ?
 
