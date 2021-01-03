@@ -10,7 +10,17 @@ This is done by putting a queue between them and having a lambda with a throttle
 ![arch](https://raw.githubusercontent.com/cdk-patterns/serverless/master/the-scalable-webhook/img/architecture.png)
 **NOTE**: For this pattern in the cdk deployable construct I have swapped RDS for DynamoDB.
 
-
+## Pattern Background
+If we weren't using DynamoDB, we would need to know the max connections limit configured for our instance size:
+![mysql](https://github.com/cdk-patterns/serverless/blob/master/the-scalable-webhook/img/mysql.png)
+We need to slow down the amount of direct requests to our DB somehow, that is where the scalable webhook comes in:
+![webhook](https://github.com/cdk-patterns/serverless/blob/master/the-scalable-webhook/img/scalable_webhook.png)
+We can use SQS to hold all requests in a queue as soon as they come in. Again, SQS will have limits:
+![sqs](https://github.com/cdk-patterns/serverless/blob/master/the-scalable-webhook/img/sqs.png)
+Now we have our messages in a queue but we need to subscribe to the queue and insert the records into the DB. To do this we create a throttled lambda where we set the max number of concurrent executions to whatever scale we are happy with. This should be less than the max connections on our DB and should take into account any other Lambdas running in this account.
+![throttle](https://github.com/cdk-patterns/serverless/blob/master/the-scalable-webhook/img/throttle.png)
+One final improvement that we could make if implementing this in a production system is to delete the Lambda between the API Gateway and SQS. You can do a direct integration which will reduce costs and latency:
+![more](https://github.com/cdk-patterns/serverless/blob/master/the-scalable-webhook/img/more_scalable_webhook.png)
 ## Let's Dive in the Code
 #### Step 1
 Initialize your cdk project
