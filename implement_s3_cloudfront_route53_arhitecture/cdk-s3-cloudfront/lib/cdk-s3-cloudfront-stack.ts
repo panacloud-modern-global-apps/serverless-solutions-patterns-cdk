@@ -16,27 +16,9 @@ export class CdkS3CloudfrontStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
 
-    // The code that defines your stack goes here
     const myZone = new route53.PublicHostedZone(this, "HostedZone", {
       zoneName: "s3pattern.tk",
     }) as IHostedZone
-
-    // ssl ceritificate
-    // const certificate = new acm.DnsValidatedCertificate(
-    //   this,
-    //   "CrossRegionCertificate",
-    //   {
-    //     domainName: "s3pattern.tk",
-    //     hostedZone: myZone as any,
-    //     region: "us-east-1",
-    //     validation: CertificateValidation.fromDns(myZone),
-    //   }
-    // ) as ICertificate
-
-    // const certificate = new Certificate(this, "Certificate", {
-    //   domainName: "s3pattern.tk",
-    //   validation: CertificateValidation.fromDns(myZone), // Records must be added manually
-    // })
 
     const certificate = new acm.DnsValidatedCertificate(this, 'CrossRegionCertificate', {
       domainName: 's3pattern.tk',
@@ -65,7 +47,6 @@ export class CdkS3CloudfrontStack extends cdk.Stack {
     })
 
     deployment.node.addDependency(s3_cloudfront_construct)
-    // certificate.node.addDependency(myZone)
 
     new route53.ARecord(this, "AliasA", {
       zone: myZone,
@@ -91,9 +72,7 @@ export class CdkS3CloudfrontStack extends cdk.Stack {
     })
 
     new cdk.CfnOutput(this, "websiteURL", {
-      value:
-        "https://" +
-        s3_cloudfront_construct.cloudFrontWebDistribution.domainName,
+      value:"https://"+s3_cloudfront_construct.cloudFrontWebDistribution.domainName,
     })
 
     new cdk.CfnOutput(this, "URL", {
