@@ -1,1 +1,0 @@
-[Using the AWS Lambda to DynamoDB Pattern](https://docs.aws.amazon.com/solutions/latest/constructs/walkthrough-part-2.html)
