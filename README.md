@@ -1,5 +1,5 @@
 # Serverless Solution and Architecture Patterns with CDK
-`Note: It is very likely that you will have to rename references to files inside the bin and lib directories because folders were renamed.`
+`Note: It is very likely that you will have to rename references to files inside the bin and lib directories because folders were renamed. Also there is usually a problem when using the L3 constructs with the latest version of the CDK, so try to make sure that your cdk version is the same as the version of the construct you are using.`
 
 ## Our Goal:
 
