@@ -1,4 +1,5 @@
 # Serverless Solution and Architecture Patterns with CDK
+`Note: It is very likely that you will have to rename references to files inside the bin and lib directories because folders were renamed.`
 
 ## Our Goal:
 
