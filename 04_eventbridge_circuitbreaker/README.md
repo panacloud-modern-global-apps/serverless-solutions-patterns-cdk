@@ -1,4 +1,4 @@
-# The EventBridge Circuit Breaker
+# The EventBridge Circuit Breaker 
 
 In this example, we have a lambda behind an API gateway that is supposed to integrate with an external webservice (www.google.com). The problem is that Google is down and it takes 10 seconds for your lambda to return that error. You pay for every ms of execution with Lambda so this is bad if lots of consumers hit your service.
 
