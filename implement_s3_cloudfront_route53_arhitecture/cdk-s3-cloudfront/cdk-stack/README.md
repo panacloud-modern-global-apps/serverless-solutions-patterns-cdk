@@ -45,10 +45,7 @@ const certificate = new Certificate(this, "Certificate", {
 ### Step 2 (Create A Cloudfront Distribution Of Website Using AWS S3)
 
 ```typescript
-import {
-  CloudFrontToS3,
-  CloudFrontToS3Props,
-} from "@aws-solutions-constructs/aws-cloudfront-s3"
+import {CloudFrontToS3,CloudFrontToS3Props} from "@aws-solutions-constructs/aws-cloudfront-s3"
 
 const cfs3props: CloudFrontToS3Props = {
   insertHttpSecurityHeaders: false,
@@ -58,9 +55,7 @@ const cfs3props: CloudFrontToS3Props = {
   },
 } // I disabled the security headers because they use a lambda edge which is available for us-east-1
 
-const s3_cloudfront_construct = new CloudFrontToS3(
-  this,
-  "cloudfronts3",
+const s3_cloudfront_construct = new CloudFrontToS3(this,"cloudfronts3",
   cfs3props
 )
 ```
@@ -92,6 +87,23 @@ new route53.AaaaRecord(this, "Alias", {
 
 - Creating a new Record in Route 53 to point to our CloudFront distribution
 
+- Create frontend of your website in my case, I created website folder in my root directory.
+
+- Now build the project and deploy it on cloudformation
+
+### Step 4
+
+- Now after creating a new domain, go back to the AWS route 53 service. On the Hosted zones main page click on your domain (which you’ve just created).
+
+- Inside of NS type record you can find nameservers. generally there are 4 nameservers.
+
+- On the new tab go to your domain registrar in my case, it's freenom.com, So I headed there and from My domains I selected Manage Domain. You have to find an option to set custom nameservers, and provide nameservers for your domain listed in Route 53. 
+
+- After some time your App will be avaliable to your domain.
+
+##### Note :
+ 
+- ACM Certificate Validation take a time so it is possible that when you deploy your stack it will show you erros related to certificate validation. So, simply go on a ACM console and see the that your certificate is issue or in a pending state.If it is issued so deploy the stack again otherwise, wait till the certificate is issued once it is issued you can deploy your stack with no errors.     
 
 ## Useful commands
 
